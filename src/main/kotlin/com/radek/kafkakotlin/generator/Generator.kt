@@ -1,5 +1,6 @@
 package com.radek.kafkakotlin.generator
 
+import com.github.javafaker.Faker
 import com.radek.kafkakotlin.*
 import com.radek.kafkakotlin.model.*
 import java.util.stream.IntStream
@@ -16,13 +17,11 @@ fun getRandomCountryList(): List<Country> =
                 .toList()
 
 
-fun getWorld() = World(getRandomCountryList())
 val rnd = Random
-
+val gen: Faker = Faker()
 
 class PersonGenerator {
-    val firstNames = javaClass::class.java.getResource("/dataSource/first-names.txt").readText().lines()
-    val lastNames = javaClass::class.java.getResource("/dataSource/names.txt").readText().lines()
+
     fun getPerson(): Person = getObj(
             Person(
                     generateFirstName(),
@@ -31,8 +30,8 @@ class PersonGenerator {
             )
     )
 
-    private fun generateFirstName() = firstNames[rnd.nextInt(0, firstNames.size)]
-    private fun generateLastName() = lastNames[rnd.nextInt(0, firstNames.size)]
+    private fun generateFirstName() = gen.name().firstName()
+    private fun generateLastName() = gen.name().lastName()
     private fun generateAge() = rnd.nextInt(0, 100)
 }
 
@@ -40,7 +39,7 @@ class FlatGenerator {
     fun getFlat(): Flat = Flat(getRandomArea(), getRandomPeopleList())
 
     private fun getRandomPeopleList(): List<Person> =
-            IntStream.range(1, rnd.nextInt(MAX_PEOPLE_IN_FLAT!!))
+            IntStream.range(1, rnd.nextInt(MAX_PEOPLE_IN_FLAT!!) + 1)
                     .mapToObj { PersonGenerator().getPerson() }
                     .toList()
 
@@ -50,46 +49,32 @@ class FlatGenerator {
 
 class CityGenerator {
 
-    val cities = javaClass::class.java.getResource("/dataSource/miasta.txt").readText().lines()
 
     fun getRandomCity(capital: String?) =
             City(capital ?: getCityName(), getListOfFlats())
 
     private fun getListOfFlats(): List<Flat> =
-            IntStream.range(MIN_FLATS_NUMBER!!, MIN_FLATS_NUMBER!! + rnd.nextInt(MAX_FLATS_NUMBER!!))
+            IntStream.range(0, rnd.nextInt(MAX_FLATS_NUMBER!!) + MIN_FLATS_NUMBER!!)
                     .mapToObj { FlatGenerator().getFlat() }
                     .toList()
 
 
-    private fun getCityName(): String =
-            cities[rnd.nextInt(cities.size)]
+    private fun getCityName(): String = gen.address().city()
 }
 
 class CountryGenerator {
-    val countriesAndCapitals = javaClass::class.java.getResource("/dataSource/countriesAndCapitals.txt")
-            .readText().lines().stream().map { line ->
-                line.split(" - ")
-                        .let { Pair(it[0], it.getOrNull(1)) }
-            }.toList()
-    val cities = javaClass::class.java.getResource("/dataSource/miasta.txt")
 
+    private val country = gen.country()
 
-    fun getRandomCountry(): Country = Country(getNameAndCapital(), getCities())
+    fun getRandomCountry(): Country = Country(country.name(), getCapital(country.capital()), getCities())
 
     private fun getCities(): List<City> =
-            IntStream.range(MIN_CITIES_NUMBER!!, MIN_CITIES_NUMBER + rnd.nextInt(MAX_CITIES_NUMBER!!))
+            IntStream.range(0, rnd.nextInt(MAX_CITIES_NUMBER!!) + MIN_CITIES_NUMBER!!)
                     .mapToObj { CityGenerator().getRandomCity(null) }
                     .toList()
 
-
-    private fun getNameAndCapital(): Pair<String, City> {
-        val randomPair = countriesAndCapitals[rnd.nextInt(countriesAndCapitals.size)]
-
-        fun getCapital(name: String?): City =
-                CityGenerator().getRandomCity(name)
-
-        return Pair(randomPair.first, getCapital(randomPair.second))
-    }
+    private fun getCapital(name: String?): City =
+            CityGenerator().getRandomCity(name)
 }
 
 class WorldGenerator {

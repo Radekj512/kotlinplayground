@@ -1,11 +1,48 @@
 package com.radek.kafkakotlin.model
 
-data class Person(val firstName: String, val lastName:String, val age: Int)
+import javax.persistence.Entity
+import javax.persistence.GeneratedValue
+import javax.persistence.GenerationType
+import javax.persistence.Id
 
-data class Flat(val area: Int, val people: List<Person>)
 
-data class City(val name: String, val flats: List<Flat>)
+@Entity
+data class Person(
+        @Id
+        @GeneratedValue(strategy = GenerationType.AUTO)
+        var id:Long? = null,
+        val firstName: String,
+        val lastName:String,
+        val age: Int)
 
-data class Country(val nameAndCapital: Pair<String, City>, val cities: List<City>)
+@Entity
+data class Flat(
+        @Id
+        @GeneratedValue(strategy = GenerationType.AUTO)
+        var id:Long? = null,
+        val area: Int,
+        val people: List<Person>)
 
-data class World(val countries: List<Country>)
+@Entity
+data class City(
+        @Id
+        @GeneratedValue(strategy = GenerationType.AUTO)
+        var id:Long? = null,
+        val name: String,
+        val flats: List<Flat>)
+
+@Entity
+data class Country(
+        @Id
+        @GeneratedValue(strategy = GenerationType.AUTO)
+        var id:Long? = null,
+        val name: String,
+        val capital: City,
+        val cities: List<City>)
+
+@Entity
+data class World(
+        @Id
+        @GeneratedValue(strategy = GenerationType.AUTO)
+        var id:Long? = null,
+        val countries: List<Country>)
