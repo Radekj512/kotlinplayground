@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      layout:decorate="layout/layout"
+      xsi:schemaLocation="http://www.ultraq.net.nz/thymeleaf/layout ">
+</head>
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+All worlds page
+
+<table>
+    <tr th:each="world: ${worlds}">
+        <td th:each="country: ${world.countries}">
+            <p th:text="${country.name}"></p><br/>
+
+        </td>
+    </tr>
+</table>
+</body>
+</html>

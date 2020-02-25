@@ -38,10 +38,10 @@ data class Country(
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         var id:Long? = null,
         val name: String,
-        @OneToOne
-        @PrimaryKeyJoinColumn(name="CountryId")
+        @OneToOne(fetch = FetchType.EAGER, optional = false)
+        @JoinColumn(name="capital_id", nullable=false)
         val capital: City,
-        @OneToMany
+        @OneToMany(cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
         @JoinColumn(name="CountryId")
         val cities: List<City>)
 

@@ -12,11 +12,11 @@ import kotlin.streams.toList
 
 
 @Component
-class Util @Autowired constructor(val personRepository: PersonRepository,
-                                  val flatRepository: FlatRepository,
-                                  val cityRepository: CityRepository,
-                                  val countryRepository: CountryRepository,
-                                  val worldRepository: WorldRepository) {
+class Util(private val personRepository: PersonRepository,
+           private val flatRepository: FlatRepository,
+           private val cityRepository: CityRepository,
+           private val countryRepository: CountryRepository,
+           private val worldRepository: WorldRepository) {
 
     fun getObj(obj: Any): Any {
         return when (obj) {
@@ -40,7 +40,7 @@ val rnd = Random
 val gen: Faker = Faker()
 
 @Component
-class PersonGenerator @Autowired constructor(val util: Util) {
+class PersonGenerator(private val util: Util) {
 
 
     fun getPerson(): Person = util.getObj(
@@ -56,7 +56,7 @@ class PersonGenerator @Autowired constructor(val util: Util) {
 }
 
 @Component
-class FlatGenerator @Autowired constructor(val util: Util) {
+class FlatGenerator(private val util: Util) {
     fun getFlat(): Flat = util.getObj(
             Flat(null,
                     getRandomArea(),
@@ -73,7 +73,7 @@ class FlatGenerator @Autowired constructor(val util: Util) {
 }
 
 @Component
-class CityGenerator @Autowired constructor(val util: Util) {
+class CityGenerator(private val util: Util) {
 
 
     fun getRandomCity() = util.getObj(
@@ -99,7 +99,7 @@ class CityGenerator @Autowired constructor(val util: Util) {
 }
 
 @Component
-class CountryGenerator @Autowired constructor(val util: Util) {
+class CountryGenerator(private val util: Util) {
 
     fun getRandomCountry(): Country = util.getObj(
             Country(null,
@@ -112,11 +112,10 @@ class CountryGenerator @Autowired constructor(val util: Util) {
             IntStream.range(0, rnd.nextInt(MAX_CITIES_NUMBER!!) + MIN_CITIES_NUMBER!!)
                     .mapToObj { CityGenerator(util).getRandomCity() }
                     .toList()
-
 }
 
 @Component
-class WorldGenerator @Autowired constructor(val util: Util) {
+class WorldGenerator(private val util: Util) {
 
     fun generateWorld() = util.getObj(
             World(null,

@@ -1,17 +1,9 @@
 package com.radek.kafkakotlin
 
-import com.google.gson.Gson
-import com.radek.kafkakotlin.generator.PersonGenerator
-import com.radek.kafkakotlin.generator.Util
-import com.radek.kafkakotlin.generator.WorldGenerator
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
-import org.springframework.context.annotation.Bean
-import org.springframework.stereotype.Component
-import org.springframework.util.ResourceUtils
-import java.io.File
+import java.time.ZonedDateTime
+import java.util.*
 
 val MAX_COUNTRIES: Int? = 1
 val MIN_FLAT_AREA: Int? = 1
@@ -22,13 +14,13 @@ val MAX_FLATS_NUMBER: Int? = 10
 val MIN_CITIES_NUMBER: Int? = 1
 val MAX_CITIES_NUMBER: Int? = 2
 
+const val PERSISTENCE_LOG = "persistence_log"
+val INSTANCE_ID = Base64.getEncoder()
+        .encodeToString((ZonedDateTime.now().toString() + UUID.randomUUID().toString()).toByteArray())
 @SpringBootApplication
 class KafkakotlinApplication {
+}
 
-    companion object {
-        @JvmStatic
-        fun main(args: Array<String>) {
-            runApplication<KafkakotlinApplication>(*args)
-        }
-    }
+fun main(args: Array<String>) {
+    runApplication<KafkakotlinApplication>(*args)
 }
